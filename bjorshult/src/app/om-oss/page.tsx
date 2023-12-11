@@ -30,7 +30,7 @@ const sections: Info[] = [
   },
 ];
 
-function page() {
+function Page() {
   return (
     <div className="flex flex-col gap-8 justify-center items-center">
       <Header header="Om oss" />
@@ -63,4 +63,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;
