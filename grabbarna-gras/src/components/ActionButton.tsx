@@ -186,7 +186,7 @@ function ActionButton() {
                 type="multiple"
               >
                 {services.map((service) => (
-                  <ToggleGroupItem value={service.value}>
+                  <ToggleGroupItem key={service.value} value={service.value}>
                     {service.label} (+
                     {service.prices.find((i) => i.value === size)!.price} kr)
                   </ToggleGroupItem>
