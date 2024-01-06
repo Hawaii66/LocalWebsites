@@ -1,0 +1,36 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Booking {
+	id Int @id @default(autoincrement())
+	day Day @relation(fields: [id], references: [id])
+	size String
+	grass Boolean
+	edge Boolean
+	fertilizer Boolean
+	address String
+	name String
+	createdAt DateTime @default(now())
+	completed Boolean @default(false)
+
+	@@index([id])
+}
+
+model Day {
+	id Int @id @default(autoincrement())
+	month Int
+	day Int
+	year Int
+	bookings Booking[]
+	maxBookings Int @default(0)
+}

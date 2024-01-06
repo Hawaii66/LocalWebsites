@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 type Size = {
   value: string;
@@ -149,100 +150,12 @@ function ActionButton() {
   };
 
   return (
-    <Drawer>
-      <DrawerTrigger asChild>
-        <Button className="text-bold z-20 rounded-xl bg-yellow-500 px-8 py-8 text-lg font-semibold !text-neutral-800 shadow-lg shadow-yellow-500 transition-all  hover:bg-yellow-400 active:scale-95 active:bg-yellow-300">
-          Boka besök
-        </Button>
-      </DrawerTrigger>
-      <DrawerContent className="flex items-center justify-center">
-        <div className="flex w-11/12 flex-col items-center justify-center md:w-1/2">
-          <DrawerHeader>
-            <DrawerTitle>Boka besök</DrawerTitle>
-            <DrawerDescription>
-              Fyll i tjänster och plats nedan
-            </DrawerDescription>
-          </DrawerHeader>
-          <div className="flex w-11/12 flex-col gap-8 md:w-2/3">
-            <div className="flex flex-col gap-2">
-              <Separator className="my-4" />
-              <Label className="text-lg">Storlek på gräsmattan</Label>
-              <Select value={size} onValueChange={setSize}>
-                <SelectTrigger className="w-2/3">
-                  <SelectValue placeholder="Välj storlek..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="small">Liten 100 kr</SelectItem>
-                  <SelectItem value="medium">Mellan 120 kr</SelectItem>
-                  <SelectItem value="large">Stor 150 kr</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label className="text-left text-lg">Tjänster</Label>
-              <ToggleGroup
-                onValueChange={setServices}
-                value={selectedServices}
-                type="multiple"
-              >
-                {services.map((service) => (
-                  <ToggleGroupItem key={service.value} value={service.value}>
-                    {service.label} (+
-                    {service.prices.find((i) => i.value === size)!.price} kr)
-                  </ToggleGroupItem>
-                ))}
-              </ToggleGroup>
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label className="text-lg">Address</Label>
-              <Input
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="Nyköping gata husnummer"
-                className="w-11/12 md:w-2/3"
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label className="text-lg">Namn</Label>
-              <Input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Förnamn Efternamn"
-                className="w-11/12 md:w-2/3"
-              />
-              <Label className="text-sm">- Vi återkommer med tider</Label>
-              <Label className="text-sm">
-                - Totalt: {price}
-                kr
-              </Label>
-              <Separator className="my-4" />
-            </div>
-          </div>
-          <DrawerFooter className="flex w-11/12 items-center justify-center md:w-2/3">
-            <Button
-              disabled={address === "" || name === ""}
-              onClick={() => writeEmail(false)}
-              className="w-full"
-            >
-              Send
-            </Button>
-            <Button
-              disabled={address === "" || name === ""}
-              onClick={() => writeEmail(true)}
-              className="w-full"
-              variant={"outline"}
-            >
-              Kopiera meddelande (hawaiilive@outlook.com)
-            </Button>
-            <DrawerClose className="mt-4 w-2/3">
-              <Button className="w-full" variant={"outline"}>
-                Stäng
-              </Button>
-            </DrawerClose>
-          </DrawerFooter>
-        </div>
-      </DrawerContent>
-    </Drawer>
+    <Link
+      href={"/boka"}
+      className="text-bold z-20 rounded-xl bg-yellow-500 px-8 py-4 text-lg font-semibold !text-neutral-800 shadow-lg shadow-yellow-500 transition-all  hover:bg-yellow-400 active:scale-95 active:bg-yellow-300"
+    >
+      Boka besök
+    </Link>
   );
 }
 
