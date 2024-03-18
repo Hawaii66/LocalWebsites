@@ -7,9 +7,6 @@ export async function CreateBooking(booking: Booking) {
     return prisma.booking.create({
       data: {
         address: booking.address,
-        edge: booking.edge,
-        fertilizer: booking.fertilizer,
-        grass: booking.grass,
         name: booking.name,
         size: booking.size,
         createdAt: new Date(),
@@ -18,6 +15,11 @@ export async function CreateBooking(booking: Booking) {
             id: booking.day.id,
           },
         },
+        phone: booking.phone,
+        price: booking.price,
+        raking: booking.raking,
+        edge: booking.edge,
+        fertilizer: booking.fertilizer,
       },
     });
   });
@@ -39,7 +41,9 @@ export async function GetBookings() {
 
 export async function CompleteBooking(id: number, state: boolean) {
   HandlePrismaConnection(async (prisma) => {
-    prisma.booking.update({
+    console.log(id, state);
+
+    const t = await prisma.booking.update({
       data: {
         completed: state,
       },
@@ -47,5 +51,6 @@ export async function CompleteBooking(id: number, state: boolean) {
         id: id,
       },
     });
+    console.log(t);
   });
 }

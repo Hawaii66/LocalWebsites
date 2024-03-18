@@ -9,45 +9,38 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Input } from "@/components/ui/input";
-import { services, sizes } from "@/lib/config";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Calendar } from "@/components/ui/calendar";
-import { getDate, getMonth, getYear, isBefore } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { CreateBooking } from "@/lib/booking";
 import { Day } from "@/interfaces/Day";
 import { GetDayFromDate, IsAvailable } from "@/lib/utils";
+import { SelectedSize } from "@/interfaces/Config";
+import { DefaultSize, SizeToSelected, Sizes } from "@/lib/config";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
+import { Toggle } from "./ui/toggle";
 
 type Props = {
   days: Day[];
 };
 
 function BookingRenderer({ days }: Props) {
-  const [size, setSize] = useState<string>("small");
-  const [selectedServices, setServices] = useState<string[]>(["grass"]);
   const [address, setAddress] = useState<string>("");
   const [name, setName] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
   const [date, setDate] = useState<Date | undefined>();
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState<
     { text: string; success: boolean } | undefined
   >();
+  const [size, setSize] = useState<SelectedSize>(DefaultSize);
 
   const price =
-    sizes.find((i) => i.value === size)!.price +
-    selectedServices.reduce(
-      (t, c) =>
-        t +
-        services
-          .find((i) => i.value === c)!
-          .prices.find((j) => j.value === size)!.price,
-      0,
-    );
+    size.price + size.services.reduce((prev, i) => i.option.price + prev, 0);
 
   const send = async () => {
     setLoading(true);
@@ -56,21 +49,20 @@ function BookingRenderer({ days }: Props) {
     const day = GetDayFromDate(date, days);
     if (!day) return;
 
-    const grass = !!services.find((i) => i.value === "grass");
-    const edge = !!services.find((i) => i.value === "edge");
-    const fertilizer = !!services.find((i) => i.value === "fertilizer");
+    if (!size) {
+      return;
+    }
 
     const booking = await CreateBooking({
-      size: size,
       address: address,
       name: name,
       day: day,
-      edge: edge,
-      fertilizer: fertilizer,
-      grass: grass,
       completed: false,
       createdAt: new Date(),
       id: -1,
+      phone: phone,
+      price: price,
+      size: size,
     });
 
     setLoading(false);
@@ -88,18 +80,16 @@ function BookingRenderer({ days }: Props) {
       });
     }
 
-    setSize("small");
-    setServices([]);
     setAddress("");
     setName("");
     setDate(undefined);
   };
 
   return (
-    <div className="flex flex-col items-center justify-center py-12">
-      <div className="text-center ">
-        <h1 className="text-4xl font-bold text-green-600">Grabbarna Gräs</h1>
-        <p className="text-xl font-semibold text-black">Boka ett besök nu</p>
+    <div className="flex flex-col justify-center items-center py-12">
+      <div className="text-center">
+        <h1 className="font-bold text-4xl text-green-600">Grabbarna Gräs</h1>
+        <p className="font-semibold text-black text-xl">Boka ett besök nu</p>
         <Link href={"/"}>
           <Button
             variant={
@@ -110,8 +100,8 @@ function BookingRenderer({ days }: Props) {
           </Button>
         </Link>
       </div>
-      <div className="flex w-11/12 flex-col items-center justify-center md:w-1/2">
-        <div className="flex w-11/12 flex-col gap-8 md:w-2/3">
+      <div className="flex flex-col justify-center items-center w-11/12 md:w-1/2">
+        <div className="flex flex-col gap-8 w-11/12 md:w-2/3">
           <div className="flex flex-col gap-2">
             {response && (
               <>
@@ -127,31 +117,113 @@ function BookingRenderer({ days }: Props) {
             )}
             <Separator className="my-4" />
             <Label className="text-lg">Storlek på gräsmattan</Label>
-            <Select value={size} onValueChange={setSize}>
+            <Select
+              value={size.value}
+              onValueChange={(e) =>
+                setSize(SizeToSelected(Sizes.find((i) => i.value === e)!))
+              }
+            >
               <SelectTrigger className="w-2/3">
                 <SelectValue placeholder="Välj storlek..." />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="small">Liten 100 kr</SelectItem>
-                <SelectItem value="medium">Mellan 120 kr</SelectItem>
-                <SelectItem value="large">Stor 150 kr</SelectItem>
+                {Sizes.map((size) => (
+                  <SelectItem value={size.value}>
+                    {size.label} {size.price}kr
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
           <div className="flex flex-col gap-2">
             <Label className="text-left text-lg">Tjänster</Label>
-            <ToggleGroup
-              onValueChange={setServices}
-              value={selectedServices}
-              type="multiple"
-            >
-              {services.map((service) => (
-                <ToggleGroupItem key={service.value} value={service.value}>
-                  {service.label} (+
-                  {service.prices.find((i) => i.value === size)!.price} kr)
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
+            <div className="flex flex-col gap-4">
+              {Sizes.find((i) => i.value === size.value)!.services.map(
+                (service) => (
+                  <div className="">
+                    <p className="font-bold text-md">{service.header}</p>
+                    {service.options.length === 1 ? (
+                      <Toggle
+                        size={"sm"}
+                        className="data-[state=on]:bg-neutral-600 text-neutral-700 data-[state=on]:text-neutral-100"
+                        defaultPressed={service.options[0].price === 0}
+                        onPressedChange={(state) => {
+                          if (state) {
+                            setSize((s) => ({
+                              ...s,
+                              services: s.services.concat({
+                                header: service.header,
+                                option: service.options[0],
+                              }),
+                            }));
+                          } else {
+                            setSize((s) => ({
+                              ...s,
+                              services: s.services.filter(
+                                (i) => i.header !== service.header,
+                              ),
+                            }));
+                          }
+                        }}
+                      >
+                        {service.options[0].label}
+                      </Toggle>
+                    ) : (
+                      <Tabs
+                        defaultValue={
+                          service.options[0].price === 0
+                            ? service.options[0].label
+                            : undefined
+                        }
+                        value={
+                          size.services.find((i) => i.header === service.header)
+                            ?.header
+                        }
+                      >
+                        <TabsList
+                          className="bg-white"
+                          defaultValue={service.options[0].label}
+                        >
+                          {service.options.map((option) => (
+                            <TabsTrigger
+                              className="data-[state=active]:bg-neutral-600 text-neutral-700 data-[state=active]:text-neutral-100 ring-offset-transparent"
+                              value={option.label}
+                              onClick={() => {
+                                const currentService = size.services.find(
+                                  (i) => i.header === service.header,
+                                );
+                                if (currentService) {
+                                  if (
+                                    currentService.option.label === option.label
+                                  ) {
+                                    setSize((s) => ({
+                                      ...s,
+                                      services: s.services.filter(
+                                        (i) => i.header !== service.header,
+                                      ),
+                                    }));
+                                    return;
+                                  }
+                                }
+                                setSize((s) => ({
+                                  ...s,
+                                  services: s.services.concat({
+                                    header: service.header,
+                                    option: option,
+                                  }),
+                                }));
+                              }}
+                            >
+                              {option.label}
+                            </TabsTrigger>
+                          ))}
+                        </TabsList>
+                      </Tabs>
+                    )}
+                  </div>
+                ),
+              )}
+            </div>
           </div>
           <div className="flex flex-col gap-2">
             <Label className="text-lg">Address</Label>
@@ -172,6 +244,15 @@ function BookingRenderer({ days }: Props) {
             />
           </div>
           <div className="flex flex-col gap-2">
+            <Label className="text-lg">Telefon nummer</Label>
+            <Input
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="070 123 4567"
+              className="w-11/12 md:w-2/3"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
             <Label className="text-lg">Tid</Label>
             <div className="flex flex-row">
               <Calendar
@@ -182,30 +263,24 @@ function BookingRenderer({ days }: Props) {
                 selected={date}
                 onSelect={setDate}
                 mode="single"
-                className="rounded-md border"
+                className="border rounded-md"
               />
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <Label className="text-sm">
-              - Totalt: {price}
+            <Label className="text-lg">
+              - Totalt: <span className="text-green-600">{price} </span>
               kr
             </Label>
             <Separator className="my-4" />
           </div>
         </div>
         <Button
-          disabled={
-            address === "" ||
-            name === "" ||
-            !date ||
-            selectedServices.length === 0 ||
-            loading
-          }
+          disabled={address === "" || name === "" || !date || loading}
           onClick={send}
           className="w-1/2"
         >
-          {loading ? <Loader2 className="animate-spin" /> : "Boka"}
+          {loading ? <Loader2 className="animate-spin" /> : `Boka ${price} kr`}
         </Button>
       </div>
     </div>

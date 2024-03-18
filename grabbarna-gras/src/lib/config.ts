@@ -1,77 +1,181 @@
-import { Size, Service } from "@/interfaces/Config";
+import { SelectedSize, Size } from "@/interfaces/Config";
 
-export const sizes: Size[] = [
+export const Sizes: Size[] = [
   {
+    label: "Liten 400m²",
+    price: 300,
     value: "small",
-    label: "Liten",
-    price: 100,
+    services: [
+      {
+        header: "Gräsklippning",
+        options: [
+          {
+            label: "Ingår",
+            price: 0,
+          },
+        ],
+      },
+      {
+        header: "Kantklippning",
+        options: [
+          {
+            label: "Ingår",
+            price: 0,
+          },
+        ],
+      },
+      {
+        header: "Krattning",
+        options: [
+          {
+            label: "+50 kr",
+            price: 50,
+          },
+        ],
+      },
+      {
+        header: "Gödsling",
+        options: [
+          {
+            label: "+320 kr Arbete + Material",
+            price: 320,
+          },
+          {
+            label: "+200 kr Arbete + Eget Material",
+            price: 200,
+          },
+          {
+            label: "+360 kr Arbete + Material (Algonin)",
+            price: 360,
+          },
+        ],
+      },
+    ],
   },
   {
+    label: "Medium 550m²",
+    price: 350,
     value: "medium",
-    label: "Mellan",
-    price: 120,
+    services: [
+      {
+        header: "Gräsklippning",
+        options: [
+          {
+            label: "Ingår",
+            price: 0,
+          },
+        ],
+      },
+      {
+        header: "Kantklippning",
+        options: [
+          {
+            label: "Ingår",
+            price: 0,
+          },
+        ],
+      },
+      {
+        header: "Krattning",
+        options: [
+          {
+            label: "+50 kr",
+            price: 50,
+          },
+        ],
+      },
+      {
+        header: "Gödsling",
+        options: [
+          {
+            label: "Arbete + Material",
+            price: 320,
+          },
+          {
+            label: "Arbete + Eget Material",
+            price: 200,
+          },
+          {
+            label: "Arbete + Material (Algonin)",
+            price: 360,
+          },
+        ],
+      },
+    ],
   },
   {
+    label: "Stor 700m²",
+    price: 390,
     value: "large",
-    label: "Stor",
-    price: 150,
-  },
-] as const;
-export const services: Service[] = [
-  {
-    value: "grass",
-    label: "Gräsklippning",
-    prices: [
+    services: [
       {
-        value: "small",
-        price: 50,
+        header: "Gräsklippning",
+        options: [
+          {
+            label: "Ingår",
+            price: 0,
+          },
+        ],
       },
       {
-        value: "medium",
-        price: 100,
+        header: "Kantklippning",
+        options: [
+          {
+            label: "Ingår",
+            price: 0,
+          },
+        ],
       },
       {
-        value: "large",
-        price: 200,
+        header: "Krattning",
+        options: [
+          {
+            label: "50 kr",
+            price: 50,
+          },
+        ],
+      },
+      {
+        header: "Gödsling",
+        options: [
+          {
+            label: "Arbete + Material",
+            price: 320,
+          },
+          {
+            label: "Arbete + Eget Material",
+            price: 200,
+          },
+          {
+            label: "Arbete + Material (Algonin)",
+            price: 360,
+          },
+        ],
       },
     ],
   },
-  {
-    value: "edge",
+];
 
-    label: "Kantklippning",
-    prices: [
-      {
-        value: "small",
-        price: 30,
-      },
-      {
-        value: "medium",
-        price: 30,
-      },
-      {
-        value: "large",
-        price: 30,
-      },
-    ],
-  },
-  {
-    value: "fertilizer",
+export const DefaultSize: SelectedSize = {
+  label: Sizes[0].label,
+  price: Sizes[0].price,
+  value: Sizes[0].value,
+  services: Sizes[0].services
+    .map((i) => ({
+      header: i.header,
+      option: i.options[0],
+    }))
+    .filter((i) => i.option.price === 0),
+};
 
-    label: "Gödsling",
-    prices: [
-      {
-        value: "small",
-        price: 100,
-      },
-      {
-        value: "medium",
-        price: 100,
-      },
-      {
-        value: "large",
-        price: 100,
-      },
-    ],
-  },
-] as const;
+export function SizeToSelected(size: Size): SelectedSize {
+  return {
+    label: size.label,
+    price: size.price,
+    value: size.value,
+    services: size.services.map((i) => ({
+      header: i.header,
+      option: i.options[0],
+    })),
+  };
+}

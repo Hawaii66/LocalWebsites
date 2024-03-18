@@ -83,12 +83,12 @@ function AvailableTimes({ days: defaultDays }: Props) {
   };
 
   return (
-    <div className="w-11/12">
+    <div className="flex w-full flex-col items-center">
       <h2 className="px-8 py-4 text-center text-lg font-semibold text-black">
         Tillgängliga dagar
       </h2>
-      <div className="flex w-full flex-row gap-4">
-        <div className="flex w-1/2 items-start justify-center">
+      <div className="flex w-11/12 flex-col gap-4 sm:flex-row">
+        <div className="flex w-11/12 items-start justify-center sm:w-1/2">
           <Calendar
             className="rounded-md border"
             mode="multiple"
@@ -97,7 +97,7 @@ function AvailableTimes({ days: defaultDays }: Props) {
             weekStartsOn={1}
           />
         </div>
-        <div className="flex w-1/2 flex-col items-center justify-center gap-2">
+        <div className="w-11/2 flex flex-col items-center justify-center gap-2 sm:w-1/2">
           <Button onClick={saveDays} disabled={loading}>
             {loading ? <Loader className="animate-spin" /> : "Spara"}
           </Button>

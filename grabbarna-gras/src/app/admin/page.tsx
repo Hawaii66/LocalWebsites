@@ -1,3 +1,4 @@
+import AdminPassword from "@/components/AdminPassword";
 import AvailableTimes from "@/components/AvailableTimes";
 import BookingList from "@/components/BookingList";
 import { GetBookings } from "@/lib/booking";
@@ -17,11 +18,13 @@ async function Page() {
   }
 
   return (
-    <div className="flex flex-col gap-24">
-      <BookingList bookings={bookings} />
-      <AvailableTimes days={days} />
-      <div className="h-24" />
-    </div>
+    <AdminPassword>
+      <div className="flex flex-col gap-24">
+        <BookingList bookings={bookings} />
+        <AvailableTimes days={days} />
+        <div className="h-24" />
+      </div>
+    </AdminPassword>
   );
 }
 

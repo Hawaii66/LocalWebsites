@@ -2,7 +2,6 @@
 
 import { Day } from "@/interfaces/Day";
 import HandlePrismaConnection from "./prisma";
-import { getDate, getMonth, getYear, set } from "date-fns";
 
 export async function AddDay(day: Day) {
   const createdDay = await HandlePrismaConnection(async (prisma) => {
@@ -20,6 +19,7 @@ export async function AddDay(day: Day) {
 }
 
 export async function UpdateDays(days: Day[], toDelete: Day[]) {
+  console.log(days, toDelete);
   await HandlePrismaConnection(async (prisma) => {
     await prisma.day.deleteMany({
       where: {
@@ -29,8 +29,14 @@ export async function UpdateDays(days: Day[], toDelete: Day[]) {
       },
     });
 
+    const activeDays = await prisma.day.findMany({
+      select: {
+        id: true,
+      },
+    });
+
     const newdays = days
-      .filter((i) => i.id === -1)
+      .filter((i) => !activeDays.map((i) => i.id).includes(i.id))
       .map((day) => ({
         day: day.day,
         month: day.month,
@@ -41,7 +47,9 @@ export async function UpdateDays(days: Day[], toDelete: Day[]) {
       data: newdays,
     });
 
-    const toMap = days.filter((i) => i.id !== -1);
+    const toMap = days.filter((i) =>
+      activeDays.map((i) => i.id).includes(i.id),
+    );
     for (var i = 0; i < toMap.length; i++) {
       await prisma.day.update({
         data: {
