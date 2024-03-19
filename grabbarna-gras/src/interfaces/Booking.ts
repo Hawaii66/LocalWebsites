@@ -10,5 +10,6 @@ export type Booking = {
   createdAt: Date;
   phone: string;
   price: number;
-  size: SelectedSize;
+  size: string;
+  options: string;
 };

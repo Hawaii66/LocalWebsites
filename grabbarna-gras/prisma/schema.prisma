@@ -15,15 +15,13 @@ model Booking {
 	id Int @id @default(autoincrement())
 	day Day @relation(fields: [id], references: [id])
 	size String
-	raking Boolean
-	edge Boolean
-	fertilizer Boolean
 	address String
 	name String
 	phone String @default("")
 	createdAt DateTime @default(now())
 	completed Boolean @default(false)
 	price Int
+	options String
 
 	@@index([id])
 }

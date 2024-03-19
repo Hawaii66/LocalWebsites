@@ -23,6 +23,7 @@ import { DefaultSize, SizeToSelected, Sizes } from "@/lib/config";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
 import { Toggle } from "./ui/toggle";
+import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
 
 type Props = {
   days: Day[];
@@ -53,6 +54,10 @@ function BookingRenderer({ days }: Props) {
       return;
     }
 
+    const options = size.services
+      .map((i) => `${i.header}: ${i.option.label}`)
+      .join("\n");
+
     const booking = await CreateBooking({
       address: address,
       name: name,
@@ -62,7 +67,8 @@ function BookingRenderer({ days }: Props) {
       id: -1,
       phone: phone,
       price: price,
-      size: size,
+      size: size.label,
+      options: options,
     });
 
     setLoading(false);
@@ -86,10 +92,10 @@ function BookingRenderer({ days }: Props) {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center py-12">
+    <div className="flex flex-col items-center justify-center py-12">
       <div className="text-center">
-        <h1 className="font-bold text-4xl text-green-600">Grabbarna Gräs</h1>
-        <p className="font-semibold text-black text-xl">Boka ett besök nu</p>
+        <h1 className="text-4xl font-bold text-green-600">Grabbarna Gräs</h1>
+        <p className="text-xl font-semibold text-black">Boka ett besök nu</p>
         <Link href={"/"}>
           <Button
             variant={
@@ -100,8 +106,8 @@ function BookingRenderer({ days }: Props) {
           </Button>
         </Link>
       </div>
-      <div className="flex flex-col justify-center items-center w-11/12 md:w-1/2">
-        <div className="flex flex-col gap-8 w-11/12 md:w-2/3">
+      <div className="flex w-11/12 flex-col items-center justify-center md:w-1/2">
+        <div className="flex w-11/12 flex-col gap-8 md:w-2/3">
           <div className="flex flex-col gap-2">
             {response && (
               <>
@@ -141,11 +147,11 @@ function BookingRenderer({ days }: Props) {
               {Sizes.find((i) => i.value === size.value)!.services.map(
                 (service) => (
                   <div className="">
-                    <p className="font-bold text-md">{service.header}</p>
+                    <p className="text-md font-bold">{service.header}</p>
                     {service.options.length === 1 ? (
                       <Toggle
                         size={"sm"}
-                        className="data-[state=on]:bg-neutral-600 text-neutral-700 data-[state=on]:text-neutral-100"
+                        className="bg-neutral-200 text-neutral-700 data-[state=on]:bg-neutral-600 data-[state=on]:text-neutral-100"
                         defaultPressed={service.options[0].price === 0}
                         onPressedChange={(state) => {
                           if (state) {
@@ -169,56 +175,71 @@ function BookingRenderer({ days }: Props) {
                         {service.options[0].label}
                       </Toggle>
                     ) : (
-                      <Tabs
+                      <ToggleGroup
                         defaultValue={
                           service.options[0].price === 0
                             ? service.options[0].label
                             : undefined
                         }
-                        value={
-                          size.services.find((i) => i.header === service.header)
-                            ?.header
-                        }
-                      >
-                        <TabsList
-                          className="bg-white"
-                          defaultValue={service.options[0].label}
-                        >
-                          {service.options.map((option) => (
-                            <TabsTrigger
-                              className="data-[state=active]:bg-neutral-600 text-neutral-700 data-[state=active]:text-neutral-100 ring-offset-transparent"
-                              value={option.label}
-                              onClick={() => {
-                                const currentService = size.services.find(
-                                  (i) => i.header === service.header,
-                                );
-                                if (currentService) {
-                                  if (
-                                    currentService.option.label === option.label
-                                  ) {
-                                    setSize((s) => ({
-                                      ...s,
-                                      services: s.services.filter(
-                                        (i) => i.header !== service.header,
-                                      ),
-                                    }));
-                                    return;
-                                  }
-                                }
-                                setSize((s) => ({
-                                  ...s,
-                                  services: s.services.concat({
+                        type="single"
+                        className="justify-start"
+                        onValueChange={(e) => {
+                          const currentService = size.services.find(
+                            (i) => i.header === service.header,
+                          );
+                          if (currentService) {
+                            if (e === "") {
+                              console.log("What", currentService, e);
+                              setSize((s) => ({
+                                ...s,
+                                services: s.services.filter(
+                                  (i) => i.header !== currentService.header,
+                                ),
+                              }));
+                            } else {
+                              setSize((s) => ({
+                                ...s,
+                                services: s.services
+                                  .filter(
+                                    (i) => i.header !== currentService.header,
+                                  )
+                                  .concat({
                                     header: service.header,
-                                    option: option,
+                                    option: {
+                                      label: e,
+                                      price: service.options.find(
+                                        (i) => i.label === e,
+                                      )!.price,
+                                    },
                                   }),
-                                }));
-                              }}
-                            >
-                              {option.label}
-                            </TabsTrigger>
-                          ))}
-                        </TabsList>
-                      </Tabs>
+                              }));
+                            }
+                          } else {
+                            setSize((s) => ({
+                              ...s,
+                              services: s.services.concat({
+                                header: service.header,
+                                option: {
+                                  label: e,
+                                  price: service.options.find(
+                                    (i) => i.label === e,
+                                  )!.price,
+                                },
+                              }),
+                            }));
+                          }
+                        }}
+                      >
+                        {service.options.map((option) => (
+                          <ToggleGroupItem
+                            size={"sm"}
+                            className="h-auto bg-neutral-200 py-2 text-neutral-700 data-[state=on]:bg-neutral-600 data-[state=on]:text-neutral-100"
+                            value={option.label}
+                          >
+                            {option.label}
+                          </ToggleGroupItem>
+                        ))}
+                      </ToggleGroup>
                     )}
                   </div>
                 ),
@@ -263,7 +284,7 @@ function BookingRenderer({ days }: Props) {
                 selected={date}
                 onSelect={setDate}
                 mode="single"
-                className="border rounded-md"
+                className="rounded-md border"
               />
             </div>
           </div>

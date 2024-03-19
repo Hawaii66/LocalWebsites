@@ -1,5 +1,5 @@
 "use server";
 
 export async function IsCorrectPassword(password: string) {
-  return password === "password";
+  return password === "grabbarnaadmin";
 }

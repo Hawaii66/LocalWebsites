@@ -8,7 +8,6 @@ export async function CreateBooking(booking: Booking) {
       data: {
         address: booking.address,
         name: booking.name,
-        size: booking.size,
         createdAt: new Date(),
         day: {
           connect: {
@@ -17,9 +16,8 @@ export async function CreateBooking(booking: Booking) {
         },
         phone: booking.phone,
         price: booking.price,
-        raking: booking.raking,
-        edge: booking.edge,
-        fertilizer: booking.fertilizer,
+        options: booking.options,
+        size: booking.size,
       },
     });
   });

@@ -18,31 +18,37 @@ type Props = {
   children: React.ReactNode;
 };
 
-const EXPECTED_PASSWORD = "password";
-
 function AdminPassword({ children }: Props) {
-  const [password, setPassword] = useState(
-    localStorage.getItem("admin-password") ?? "",
-  );
+  const [password, setPassword] = useState("");
   const [correct, setIsCorrect] = useState(false);
   const { toast } = useToast();
 
+  const testpassword = async (password: string) => {
+    if (await IsCorrectPassword(password)) {
+      setIsCorrect(true);
+    }
+  };
+
   useEffect(() => {
-    localStorage.setItem("admin-password", password);
+    if (password !== "") {
+      localStorage.setItem("admin-password", password);
+    }
   }, [password]);
 
   useEffect(() => {
-    const testStored = async () => {
-      if (await IsCorrectPassword(password)) {
-        setIsCorrect(true);
-      }
-    };
-    testStored();
+    const password = localStorage.getItem("admin-password") ?? "";
+    setPassword(password);
+
+    testpassword(password);
+  }, []);
+
+  useEffect(() => {
+    testpassword(password);
   }, []);
 
   if (!correct) {
     return (
-      <div className="flex justify-center items-center w-full min-h-screen">
+      <div className="flex min-h-screen w-full items-center justify-center">
         <Card>
           <CardHeader>
             <CardTitle>Admin Login</CardTitle>

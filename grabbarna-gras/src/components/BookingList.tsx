@@ -100,23 +100,12 @@ function BookingList({ bookings: defaultBookings }: Props) {
                   {format(DayToDate(booking.day), "yyyy-MM-dd")}
                 </TableCell>
                 <TableCell>
-                  {[
-                    {
-                      label: "Krattning",
-                      enabled: booking.raking,
-                    },
-                    {
-                      label: "Kant",
-                      enabled: booking.edge,
-                    },
-                    {
-                      label: "Gödsel",
-                      enabled: booking.fertilizer,
-                    },
-                  ]
-                    .map((i) => (i.enabled ? i.label : undefined))
-                    .filter((i) => i !== undefined)
-                    .join(", ")}
+                  {booking.options.split("\n").map((i) => (
+                    <>
+                      {i}
+                      <br />
+                    </>
+                  ))}
                 </TableCell>
                 <TableCell className="flex flex-row items-center justify-start gap-4">
                   <Checkbox
@@ -124,6 +113,7 @@ function BookingList({ bookings: defaultBookings }: Props) {
                       console.log(e);
                       markDone(idx, e ? true : false);
                     }}
+                    className="h-10 w-10"
                     checked={booking.completed}
                   />
                 </TableCell>
@@ -145,6 +135,8 @@ function BookingList({ bookings: defaultBookings }: Props) {
                 </p>
               )}
             </TableCell>
+            <TableCell />
+            <TableCell />
             <TableCell />
             <TableCell />
             <TableCell />

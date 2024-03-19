@@ -79,8 +79,8 @@ export const Sizes: Size[] = [
         header: "Krattning",
         options: [
           {
-            label: "+50 kr",
-            price: 50,
+            label: "+75 kr",
+            price: 75,
           },
         ],
       },
@@ -88,16 +88,16 @@ export const Sizes: Size[] = [
         header: "Gödsling",
         options: [
           {
-            label: "Arbete + Material",
-            price: 320,
+            label: "+425 kr Arbete + Material",
+            price: 425,
           },
           {
-            label: "Arbete + Eget Material",
-            price: 200,
+            label: "+150 kr Arbete + Eget Material",
+            price: 150,
           },
           {
-            label: "Arbete + Material (Algonin)",
-            price: 360,
+            label: "+500 kr Arbete + Material (Algonin)",
+            price: 500,
           },
         ],
       },
@@ -121,8 +121,8 @@ export const Sizes: Size[] = [
         header: "Kantklippning",
         options: [
           {
-            label: "Ingår",
-            price: 0,
+            label: "+40 kr",
+            price: 40,
           },
         ],
       },
@@ -130,8 +130,8 @@ export const Sizes: Size[] = [
         header: "Krattning",
         options: [
           {
-            label: "50 kr",
-            price: 50,
+            label: "95 kr",
+            price: 95,
           },
         ],
       },
@@ -139,16 +139,16 @@ export const Sizes: Size[] = [
         header: "Gödsling",
         options: [
           {
-            label: "Arbete + Material",
-            price: 320,
+            label: "+515 kr Arbete + Material",
+            price: 515,
           },
           {
-            label: "Arbete + Eget Material",
-            price: 200,
+            label: "+350 kr Arbete + Eget Material",
+            price: 350,
           },
           {
-            label: "Arbete + Material (Algonin)",
-            price: 360,
+            label: "+600 kr Arbete + Material (Algonin)",
+            price: 600,
           },
         ],
       },
