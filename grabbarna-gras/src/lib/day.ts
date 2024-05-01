@@ -19,7 +19,6 @@ export async function AddDay(day: Day) {
 }
 
 export async function UpdateDays(days: Day[], toDelete: Day[]) {
-  console.log(days, toDelete);
   await HandlePrismaConnection(async (prisma) => {
     await prisma.day.deleteMany({
       where: {

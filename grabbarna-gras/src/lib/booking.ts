@@ -39,8 +39,6 @@ export async function GetBookings() {
 
 export async function CompleteBooking(id: number, state: boolean) {
   HandlePrismaConnection(async (prisma) => {
-    console.log(id, state);
-
     const t = await prisma.booking.update({
       data: {
         completed: state,
@@ -49,6 +47,5 @@ export async function CompleteBooking(id: number, state: boolean) {
         id: id,
       },
     });
-    console.log(t);
   });
 }

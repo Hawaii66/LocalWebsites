@@ -9,6 +9,7 @@ import { Loader, Trash } from "lucide-react";
 import { Button } from "./ui/button";
 import { DayToDate, GetDayFromDate, IsInside, SortDays } from "@/lib/utils";
 import { GetDays, UpdateDays } from "@/lib/day";
+import { NumberToMonth } from "@/lib/month";
 
 type Props = {
   days: Day[];
@@ -83,56 +84,56 @@ function AvailableTimes({ days: defaultDays }: Props) {
   };
 
   return (
-    <div className="flex w-full flex-col items-center">
-      <h2 className="px-8 py-4 text-center text-lg font-semibold text-black">
+    <div className="flex flex-col items-center w-full">
+      <h2 className="px-8 py-4 font-semibold text-black text-center text-lg">
         Tillgängliga dagar
       </h2>
-      <div className="flex w-11/12 flex-col gap-4 sm:flex-row">
-        <div className="flex w-11/12 items-start justify-center sm:w-1/2">
+      <div className="flex sm:flex-row flex-col gap-4 w-11/12">
+        <div className="flex justify-center items-start w-11/12 sm:w-1/2">
           <Calendar
-            className="rounded-md border"
+            className="border rounded-md"
             mode="multiple"
             onSelect={(d) => addDay(d)}
             selected={days.map((i) => DayToDate(i))}
             weekStartsOn={1}
           />
         </div>
-        <div className="w-11/2 flex flex-col items-center justify-center gap-2 sm:w-1/2">
+        <div className="flex flex-col justify-center items-center gap-2 w-11/2 sm:w-1/2">
           <Button onClick={saveDays} disabled={loading}>
             {loading ? <Loader className="animate-spin" /> : "Spara"}
           </Button>
-          <div className="flex flex-row items-center justify-between gap-2">
+          <div className="flex flex-row justify-between items-center gap-2">
             <Input readOnly value="År" />
             <Input readOnly value="Månad" />
             <Input readOnly value="Dag" />
             <div className="w-24" />
             <Input readOnly value="Max antal bokningar" />
           </div>
-          <p className="w-full text-left text-sm text-neutral-500">
-            Månad: (0 = januari, 1 = februari... 11 = december)
-          </p>
           {SortDays(days).map((i, idx) => (
             <div
               key={`${i.id}`}
-              className="flex flex-row items-center justify-between gap-2"
+              className="flex flex-row justify-between items-center gap-2"
             >
               <Input
                 onChange={(e) =>
                   updateDay(idx, { year: StringToNum(e.target.value) })
                 }
                 value={i.year}
+                disabled
               />
               <Input
                 onChange={(e) =>
                   updateDay(idx, { month: StringToNum(e.target.value) })
                 }
-                value={i.month}
+                value={NumberToMonth(i.month)}
+                disabled
               />
               <Input
                 onChange={(e) =>
                   updateDay(idx, { day: StringToNum(e.target.value) })
                 }
                 value={i.day}
+                disabled
               />
               <div className="w-24" />
               <Input
