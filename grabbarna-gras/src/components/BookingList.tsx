@@ -17,7 +17,7 @@ import { Checkbox } from "./ui/checkbox";
 import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { DayToDate } from "@/lib/utils";
-import { CompleteBooking } from "@/lib/booking";
+import { CompleteBooking, GetBookings } from "@/lib/booking";
 import { Loader } from "lucide-react";
 
 type Props = {
@@ -49,17 +49,25 @@ function BookingList({ bookings: defaultBookings }: Props) {
     setSavingBookings(false);
   };
 
+  const reloadBookings = async () => {
+    setBookings([]);
+    const bookings = await GetBookings();
+    if (!bookings) return;
+
+    setBookings(bookings);
+  };
+
   return (
-    <div className="flex flex-col justify-center items-center">
-      <h1 className="px-12 pt-8 w-full font-bold text-3xl text-black text-left">
+    <div className="flex flex-col items-center justify-center">
+      <h1 className="w-full px-12 pt-8 text-left text-3xl font-bold text-black">
         Grabbarn Gräs - Admin
       </h1>
       <div className="px-12">
-        <h2 className="px-8 py-4 font-semibold text-black text-lg">
+        <h2 className="px-8 py-4 text-lg font-semibold text-black">
           Tabell inställningar
         </h2>
-        <div className="flex justify-start items-center gap-4 px-12">
-          <Label className="flex justify-center items-center text-lg">
+        <div className="flex items-center justify-start gap-4 px-12">
+          <Label className="flex items-center justify-center text-lg">
             Visa färdiga
           </Label>
           <Checkbox
@@ -106,12 +114,12 @@ function BookingList({ bookings: defaultBookings }: Props) {
                     </>
                   ))}
                 </TableCell>
-                <TableCell className="flex flex-row justify-start items-center gap-4">
+                <TableCell className="flex flex-row items-center justify-start gap-4">
                   <Checkbox
                     onCheckedChange={(e) => {
                       markDone(idx, e ? true : false);
                     }}
-                    className="w-10 h-10"
+                    className="h-10 w-10"
                     checked={booking.completed}
                   />
                 </TableCell>
@@ -120,15 +128,16 @@ function BookingList({ bookings: defaultBookings }: Props) {
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell>
+            <TableCell className="flex flex-row gap-4">
               <Button onClick={saveChanges}>
                 {savingBookings ? <Loader className="animate-spin" /> : "Spara"}
               </Button>
+              <Button onClick={reloadBookings}>Ladda igen</Button>
             </TableCell>
             <TableCell>
               {bookings.filter((i) => (showCompleted ? true : !i.completed))
                 .length === 0 && (
-                <p className="w-full font-bold text-center text-lg">
+                <p className="w-full text-center text-lg font-bold">
                   Inga bokningar att visa
                 </p>
               )}

@@ -5,6 +5,8 @@ import { GetBookings } from "@/lib/booking";
 import { GetDays } from "@/lib/day";
 import React from "react";
 
+export const revalidate = 0;
+
 async function Page() {
   const bookings = await GetBookings();
   const days = await GetDays();
